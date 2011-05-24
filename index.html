@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="css/reset.css">
+        <link rel="stylesheet" href="css/main.css">
+        <script src="js/mootools.js"></script>
+        <script src="js/color.js"></script>
+        <script src="js/game/util.js"></script>
+        <script src="js/game/world.js"></script>
+        <script src="socket.io/socket.io.js"></script>
+        <!--[if lt IE 9]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script> <![endif]-->
+    </head>
+    <body>
+        <canvas id="gameboard" width="1300" height="500"></canvas>
+        <p>
+            <input type="text" id="name" value="Player One"/>
+            <a href="#" id="start-game">start</a>
+        </p>
+        <p id="invite"></p>
+        <p id="status"></p>
+    </body>
+</html>
