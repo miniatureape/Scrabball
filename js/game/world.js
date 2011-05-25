@@ -2,7 +2,11 @@ this.Scrabball = this.Scrabball || {};
 
 (function($, G) {
 
+    var P_ONE = 1;
+    var P_TWO = 2;
     var ONE_SECOND = 1000;
+    var TROUGH_OFFSET_H = 10; // % of dim
+    var TROUGH_OFFSET_V = 10; // % of dim
 
     var Board = new Class({
         Implements: [Options],
@@ -32,12 +36,23 @@ this.Scrabball = this.Scrabball || {};
         },
 
         buildTroughs: function() {
-            var coords = new Vec2D();
-            var pOneTrough = new Trough(coords);
+            var vec = this.getTroughLocation(P_ONE);
+            var pOneTrough = new G.Trough(vec);
             this.pushSprite('troughs', pOneTrough);
 
-            var pTwoTrough = new Trough(coords);
+            vec = this.getTroughLocation(P_TWO);
+            var pTwoTrough = new G.Trough(vec);
             this.pushSprite('troughs', pTwoTrough);
+        },
+
+        getTroughLocation: function(player) {
+            var y = this.coords.height / TROUGH_OFFSET_V;
+            var x = this.coords.width / TROUGH_OFFSET_H
+            if (player === P_TWO) {
+                console.log("ptwo");
+                x = this.coords.width - x;
+            }
+            return new G.Vector2D(x, y);
         },
 
         pushSprite: function(ns, sprite) {
