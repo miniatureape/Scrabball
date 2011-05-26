@@ -2,8 +2,9 @@ this.Scrabball = this.Scrabball || {};
 
 (function($, G) {
 
-    var P_ONE = 1;
-    var P_TWO = 2;
+    G.P_ONE = 1;
+    G.P_TWO = 2;
+
     var ONE_SECOND = 1000;
     var TROUGH_OFFSET_H = 10; // % of dim
     var TROUGH_OFFSET_V = 10; // % of dim
@@ -21,7 +22,6 @@ this.Scrabball = this.Scrabball || {};
             lineColor: '#666666'
         },
 
-
         initialize: function(canvas, opts) {
             this.setOptions(opts);
             this.ctx = $(canvas).getContext('2d');
@@ -36,31 +36,54 @@ this.Scrabball = this.Scrabball || {};
         },
 
         buildTroughs: function() {
-            var vec = this.getTroughLocation(P_ONE);
+            var x = TROUGH_OFFSET_H,
+                y = TROUGH_OFFSET_V;
+                
+            var vec = this.getOffset(G.P_ONE, x, y);
             var pOneTrough = new G.Trough(vec);
             this.pushSprite('troughs', pOneTrough);
 
-            vec = this.getTroughLocation(P_TWO);
+            vec = this.getOffset(G.P_TWO, x, y);
             var pTwoTrough = new G.Trough(vec);
             this.pushSprite('troughs', pTwoTrough);
         },
 
-        getTroughLocation: function(player) {
-            var y = this.coords.height / TROUGH_OFFSET_V;
-            var x = this.coords.width / TROUGH_OFFSET_H
-            if (player === P_TWO) {
-                console.log("ptwo");
+        addInitialBalls: function() {
+            // TODO When these are finalized, make them their own constants.
+            var x = TROUGH_OFFSET_H * 2,
+                y = TROUGH_OFFSET_V;
+
+            var vec = this.getOffset(G.P_ONE, x, y);
+            var balls = G.BallMgr.createAlongLine(vec, 10, 20, 20);
+            this.pushSprite('balls', balls);
+
+            vec = this.getOffset(G.P_TWO, x, y);
+            var balls = G.BallMgr.createAlongLine(vec, 10, 20, 20);
+            this.pushSprite('balls', balls);
+            console.log(this.sprites);
+        },
+        
+        getOffset: function(player, offX, offY) {
+            var y = this.coords.height / offY,
+                x = this.coords.width / offX;
+
+            if (player === G.P_TWO) {
                 x = this.coords.width - x;
             }
             return new G.Vector2D(x, y);
         },
 
-        pushSprite: function(ns, sprite) {
-            this.sprites[ns].push(sprite);        
+        pushSprite: function(ns, sprites) {
+            if (sprites.length) {
+                this.sprites[ns] = this.sprites[ns].concat(sprites);        
+            } else {
+                this.sprites[ns].push(sprites);        
+            }
         },
 
         setup: function() {
-
+            this.addInitialBalls();
+            debugger;
         },
 
         render: function() {
