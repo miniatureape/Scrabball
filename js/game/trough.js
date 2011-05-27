@@ -3,7 +3,7 @@ this.Scrabball = this.Scrabball || {};
 (function($, G) {
     
     var NUM_BOXES = 8;
-    var BOX_SIZE = 20; // px
+    var BOX_SIZE = 25; // px
     var BOX_SPACING = 5; //px
 
     G.Trough = new Class({
@@ -40,12 +40,12 @@ this.Scrabball = this.Scrabball || {};
         },
 
         render: function(ctx) {
-            var stroke = '#ff0000';
+            var stroke = '#bbbbbb';
             ctx.save();
             ctx.strokeStyle = stroke;
-            ctx.fillStyle = stroke;
+            //ctx.beginPath();
             ctx.translate(this.loc.x, this.loc.y);
-            ctx.fillRect(0, 0, BOX_SIZE, BOX_SIZE);
+            ctx.rect(0, 0, BOX_SIZE, BOX_SIZE);
             ctx.stroke();
             ctx.restore();
         }

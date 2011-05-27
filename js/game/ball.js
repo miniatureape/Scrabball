@@ -2,7 +2,8 @@ this.Scrabball = this.Scrabball || {};
 
 (function($, G) {
 
-    var RADIUS = 30;
+    var RADIUS = 10;
+    var FRICTION = 75;
 
     G.Ball = new Class({
         id: null,
@@ -12,6 +13,7 @@ this.Scrabball = this.Scrabball || {};
         rot: null,
         rad: null,
         color: null,
+        maxSpeed: 10,
         val: '',
 
         initialize: function(loc) {
@@ -27,15 +29,17 @@ this.Scrabball = this.Scrabball || {};
             var stroke = '#ff0000';
             ctx.save();
             ctx.strokeStyle = stroke;
-            ctx.fillStyle = stroke;
+            ctx.beginPath();
             ctx.translate(this.loc.x, this.loc.y);
-            ctx.fillRect(0, 0, RADIUS, RADIUS);
+            ctx.arc(0, 0, RADIUS, 0, G.Util.TWO_PI);
             ctx.stroke();
             ctx.restore();
 
         },
 
         update: function() {
+            this.friction(this.vel);
+
             this.vel.add(this.acc);
             this.vel.limit(this.maxSpeed);
             this.loc.add(this.vel);
@@ -49,11 +53,19 @@ this.Scrabball = this.Scrabball || {};
             }
         },
 
+        friction: function(vel) {
+            // TODO, you might want to stop thing completely if their vel/acc is too low
+            var frict = G.Vector2D.mult(vel, -1).scale(1/FRICTION);
+            vel.add(frict);
+        }
+
     });
 
-    G.BallMgr = function() {};
+    G.BallMgr = function(balls) {
+        this.balls = balls;
+    };
 
-    G.BallMgr.createAlongLine = function(vec, num, size, spacing) {
+    G.BallMgr.prototype.createAlongLine = function(vec, num, size, spacing) {
         var results = [],
             stepVec = new G.Vector2D(0, size + spacing);
 
@@ -65,15 +77,21 @@ this.Scrabball = this.Scrabball || {};
         return results;
     }
 
-    G.BallMgr.collide = function(balls) {
+    G.BallMgr.prototype.collide = function() {
         tested = {};
-        balls.each(function(ball) {
-            balls.each(function(other) {
+
+        this.balls.each(function(ball) {
+
+            // Collide with other balls.
+            this.balls.each(function(other) {
                 if (!tested[ball.id]) {
                     ball.collide(other);
                     tested[ball.id] 
                 }
             })
+
+            // Collide with walls
+            ball.walls();
         });
     
     }

@@ -3,6 +3,8 @@ this.Scrabball = this.Scrabball || {};
 (function($, G) {
 
     G.Util = {};
+
+    G.Util.TWO_PI = Math.PI * 2;
  
     G.Util.qString = function(qs) {
         var result = {};

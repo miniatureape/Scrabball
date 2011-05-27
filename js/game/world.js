@@ -30,6 +30,7 @@ this.Scrabball = this.Scrabball || {};
             this.height = this.coords.height;
 
             this.setupBoard(this.ctx);
+            this.ballMgr = new G.BallMgr(this.sprites.balls);
         },
 
         setupBoard: function(ctx) {
@@ -56,11 +57,11 @@ this.Scrabball = this.Scrabball || {};
                 y = TROUGH_OFFSET_V;
 
             var vec = this.getOffset(G.P_ONE, x, y);
-            var balls = G.BallMgr.createAlongLine(vec, 10, 20, 20);
+            var balls = this.ballMgr.createAlongLine(vec, 10, 20, 20);
             this.pushSprite('balls', balls);
 
             vec = this.getOffset(G.P_TWO, x, y);
-            var balls = G.BallMgr.createAlongLine(vec, 10, 20, 20);
+            var balls = this.ballMgr.createAlongLine(vec, 10, 20, 20);
             this.pushSprite('balls', balls);
             console.log(this.sprites);
         },
@@ -98,7 +99,7 @@ this.Scrabball = this.Scrabball || {};
                 });
             }
 
-            G.BallMgr.collide(this.sprites['balls']);
+            this.ballMgr.collide();
         },
 
         background: function(ctx) {
@@ -112,12 +113,11 @@ this.Scrabball = this.Scrabball || {};
             var x = this.width/2;
             var height = this.height;
 
-            ctx.save();
             ctx.strokeStyle = stroke;
+            ctx.beginPath();
             ctx.moveTo(x, 0);
             ctx.lineTo(x,height);
             ctx.stroke();
-            ctx.restore();
         },
 
     });
