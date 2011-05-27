@@ -26,6 +26,8 @@ this.Scrabball = this.Scrabball || {};
             this.setOptions(opts);
             this.ctx = $(canvas).getContext('2d');
             this.coords = $(canvas).getCoordinates();
+            this.width = this.coords.width;
+            this.height = this.coords.height;
 
             this.setupBoard(this.ctx);
         },
@@ -64,11 +66,11 @@ this.Scrabball = this.Scrabball || {};
         },
         
         getOffset: function(player, offX, offY) {
-            var y = this.coords.height / offY,
-                x = this.coords.width / offX;
+            var y = this.height / offY,
+                x = this.width / offX;
 
             if (player === G.P_TWO) {
-                x = this.coords.width - x;
+                x = this.width - x;
             }
             return new G.Vector2D(x, y);
         },
@@ -83,11 +85,11 @@ this.Scrabball = this.Scrabball || {};
 
         setup: function() {
             this.addInitialBalls();
-            debugger;
         },
 
         render: function() {
             var ctx = this.ctx;
+            this.background(ctx);
             this.renderCenterline(ctx);
 
             for (set in this.sprites) {
@@ -95,12 +97,20 @@ this.Scrabball = this.Scrabball || {};
                     sprite.render(ctx);
                 });
             }
+
+            G.BallMgr.collide(this.sprites['balls']);
+        },
+
+        background: function(ctx) {
+            ctx.fillStyle = '#eeeeee';
+            ctx.fillRect(0, 0, this.width, this.height)
+            ctx.fill();
         },
 
         renderCenterline: function(ctx) {
             var stroke = this.options.lineColor;
-            var x = this.coords.width/2;
-            var height = this.coords.height;
+            var x = this.width/2;
+            var height = this.height;
 
             ctx.save();
             ctx.strokeStyle = stroke;
@@ -195,6 +205,7 @@ this.Scrabball = this.Scrabball || {};
 
         game.addEvent('game.id', function(id) {
             $('invite').set('html', "Send this link to another player: " + window.location + "?game=" +  id);
+            $('invite').set('href',  window.location + "?game=" +  id);
             $('status').set('html', "waiting for player to join");
         })
 

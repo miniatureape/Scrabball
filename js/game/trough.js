@@ -19,7 +19,7 @@ this.Scrabball = this.Scrabball || {};
             var stepVec = new G.Vector2D(0, BOX_SIZE + BOX_SPACING);
             for (var i = 0; i < NUM_BOXES; i++) {
                 this.boxes.push( new G.Scorebox(vec) );
-                vec = G.Vector2D._add(vec, stepVec);
+                vec = G.Vector2D.add(vec, stepVec);
             }
         },
 
@@ -37,7 +37,6 @@ this.Scrabball = this.Scrabball || {};
 
         initialize: function(vec) {
             this.loc = vec;
-            console.log("Box is at", vec.toString());
         },
 
         render: function(ctx) {
