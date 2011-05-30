@@ -13,6 +13,7 @@ this.Scrabball = this.Scrabball || {};
         rot: null,
         rad: null,
         color: null,
+        mass: 1,
         maxSpeed: 10,
         val: '',
 
@@ -46,11 +47,35 @@ this.Scrabball = this.Scrabball || {};
             this.acc.mult(0); 
         },
 
+        applyForce: function(force) {
+            force.div(this.mass);
+            this.acc.add(force);
+        },
+
         collide: function(other) {
             var dist = G.Vector2D.sub(this.loc, other.loc).mag();
             if (dist < this.rad + other.rad) {
-                console.log('Collision!', this, other);
+            
+                var normal = Vector2D.sub(other.loc, this.loc);
+                normal.normalize();
+                var velocity = Vector2D.sub(this.vel, other.vel);
+                var mag = velocity.mag;
+                normal = Vector2D.mult(normal, mag);
+
+                other.applyForce(normal);
             }
+        },
+
+        bounds: function(bounds) {
+           var normal, c;
+           if (this.loc.x < bounds.topleft.x) normal = G.Util.RIGHT;
+           if (this.loc.y < bounds.topleft.y) normal = G.Util.DOWN;
+           if (this.loc.x > bounds.bottomright.x) normal = G.Util.LEFT;
+           if (this.loc.y > bounds.bottomright.y) normal = G.Util.UP;
+           if (normal) {
+               var c = Vector2D.componentVector(this.vel, normal);
+               this.vel.sub(c.mult(2));
+           }
         },
 
         friction: function(vel) {
@@ -61,8 +86,8 @@ this.Scrabball = this.Scrabball || {};
 
     });
 
-    G.BallMgr = function(balls) {
-        this.balls = balls;
+    G.BallMgr = function(bounds) {
+        this.bounds = bounds;
     };
 
     G.BallMgr.prototype.createAlongLine = function(vec, num, size, spacing) {
@@ -77,22 +102,22 @@ this.Scrabball = this.Scrabball || {};
         return results;
     }
 
-    G.BallMgr.prototype.collide = function() {
+    G.BallMgr.prototype.collide = function(balls) {
         tested = {};
 
-        this.balls.each(function(ball) {
+        balls.each(function(ball) {
 
             // Collide with other balls.
-            this.balls.each(function(other) {
-                if (!tested[ball.id]) {
+            balls.each(function(other) {
+                if (!tested[ball.id] && ball != other) {
                     ball.collide(other);
                     tested[ball.id] 
                 }
             })
 
             // Collide with walls
-            ball.walls();
-        });
+            ball.bounds(this.bounds);
+        }, this);
     
     }
  

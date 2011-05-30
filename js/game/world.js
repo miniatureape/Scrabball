@@ -30,7 +30,16 @@ this.Scrabball = this.Scrabball || {};
             this.height = this.coords.height;
 
             this.setupBoard(this.ctx);
-            this.ballMgr = new G.BallMgr(this.sprites.balls);
+
+            var bounds = this.createBounds();
+            this.ballMgr = new G.BallMgr(bounds);
+        },
+        
+        createBounds: function() {
+            return {
+                topleft: {x: 0, y: 0},
+                bottomright: {x: this.width, y: this.height}
+            };
         },
 
         setupBoard: function(ctx) {
@@ -63,7 +72,6 @@ this.Scrabball = this.Scrabball || {};
             vec = this.getOffset(G.P_TWO, x, y);
             var balls = this.ballMgr.createAlongLine(vec, 10, 20, 20);
             this.pushSprite('balls', balls);
-            console.log(this.sprites);
         },
         
         getOffset: function(player, offX, offY) {
@@ -99,7 +107,7 @@ this.Scrabball = this.Scrabball || {};
                 });
             }
 
-            this.ballMgr.collide();
+            this.ballMgr.collide(this.sprites.balls);
         },
 
         background: function(ctx) {

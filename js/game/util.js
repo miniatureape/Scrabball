@@ -4,6 +4,11 @@ this.Scrabball = this.Scrabball || {};
 
     G.Util = {};
 
+    G.Util.UP = new Vector2D(0, -1);
+    G.Util.DOWN = new Vector2D(0, 1);
+    G.Util.LEFT = new Vector2D(-1, 0);
+    G.Util.RIGHT = new Vector2D(1, 0);
+
     G.Util.TWO_PI = Math.PI * 2;
  
     G.Util.qString = function(qs) {
@@ -19,7 +24,12 @@ this.Scrabball = this.Scrabball || {};
         });
 
         return result;
-    }
+    };
+
+    // physics
+    G.Util.wallCollision = function(ball, normal) {
+
+    };
 
 
  })(document.id, this.Scrabball)
