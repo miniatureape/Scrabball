@@ -53,16 +53,24 @@ this.Scrabball = this.Scrabball || {};
         },
 
         collide: function(other) {
-            var dist = G.Vector2D.sub(this.loc, other.loc).mag();
+            var normal = G.Vector2D.sub(this.loc, other.loc); 
+            var dist = normal.mag();
             if (dist < this.rad + other.rad) {
-            
-                var normal = Vector2D.sub(other.loc, this.loc);
-                normal.normalize();
-                var velocity = Vector2D.sub(this.vel, other.vel);
-                var mag = velocity.mag;
-                normal = Vector2D.mult(normal, mag);
+                // Move balls to boundaries so they aren't overlapping
+                var unitNormal = normal.get().normalize();
+                var offset = this.rad - dist / 2;
 
-                other.applyForce(normal);
+                this.loc = this.loc.add(unitNormal.get().scale(offset));
+                other.loc = other.loc.add(unitNormal.get().scale(-offset));
+
+                // resolve collision
+                /*
+                var velocity = G.Vector2D.sub(this.vel, other.vel);
+                var mag = velocity.mag();
+                normal = Vector2D.mult(normal, mag);
+                other.applyForce(normal.get());
+                this.applyForce(normal.get().mult(-1));
+                */
             }
         },
 
