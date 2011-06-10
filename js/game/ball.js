@@ -63,14 +63,12 @@ this.Scrabball = this.Scrabball || {};
                 this.loc = this.loc.add(unitNormal.get().scale(offset));
                 other.loc = other.loc.add(unitNormal.get().scale(-offset));
 
-                // resolve collision
-                /*
-                var velocity = G.Vector2D.sub(this.vel, other.vel);
-                var mag = velocity.mag();
-                normal = Vector2D.mult(normal, mag);
-                other.applyForce(normal.get());
-                this.applyForce(normal.get().mult(-1));
-                */
+                var velDiff = this.vel.get().sub(other.vel.get());
+                var un = G.Vector2D.componentVector(velDiff, normal.get());
+                var ut = velDiff.sub(un);
+
+                this.vel.set(ut.add(other.vel));
+                other.vel.set(un.add(other.vel));
             }
         },
 
