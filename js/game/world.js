@@ -23,16 +23,64 @@ this.Scrabball = this.Scrabball || {};
         },
 
         initialize: function(canvas, opts) {
+            var canvas = $(canvas);
             this.setOptions(opts);
-            this.ctx = $(canvas).getContext('2d');
-            this.coords = $(canvas).getCoordinates();
+            this.ctx = canvas.getContext('2d');
+            this.coords = canvas.getCoordinates();
             this.width = this.coords.width;
             this.height = this.coords.height;
 
             this.setupBoard(this.ctx);
+            this.setupInputs(canvas);
 
             var bounds = this.createBounds();
             this.ballMgr = new G.BallMgr(bounds);
+        },
+
+        setupInputs: function(canvas) {
+
+            // Initial State
+            G.mousePos = new G.Vector2D(0, 0);
+            G.lastMousePos = new G.Vector2D(0, 0);
+            G.mousePressed = false;   
+
+            canvas.addEvent('mousedown', this.mouseDown.bind(this));
+            canvas.addEvent('mouseup', this.mouseUp.bind(this));
+            canvas.addEvent('mousemove', this.mouseMove.bind(this));
+
+        },
+
+        mouseDown: function(e) {
+            e.preventDefault();
+            G.mousePressed = true;
+            var hit = this.ballMgr.testClick(this.sprites.balls, G.mousePos);
+            if (hit) {
+                hit.vel.zero();
+            }
+        },
+
+        mouseUp: function(e) {
+            e.preventDefault();
+
+            // Handle interaction
+            if (G.mousePressed && this.ballMgr.hit) {
+                var vel = G.mousePos.get().sub(G.lastMousePos);
+                this.ballMgr.hit.applyForce(vel);
+            }
+
+            G.mousePressed = false;   
+            this.ballMgr.hit = null;
+        },
+
+        mouseMove: function(e) {
+            // convert to element position
+            var x = e.page.x - this.coords.left,
+                y = e.page.y - this.coords.top;
+
+            // Set global positions
+            G.lastMousePos = G.mousePos.get();
+            G.mousePos.setCoords(x,y);
+
         },
         
         createBounds: function() {
@@ -94,6 +142,12 @@ this.Scrabball = this.Scrabball || {};
 
         setup: function() {
             this.addInitialBalls();
+        },
+
+        interact: function() {
+            if (this.ballMgr.hit) {
+                this.ballMgr.hit.loc.set(G.mousePos.get());
+            }
         },
 
         render: function() {
@@ -176,6 +230,7 @@ this.Scrabball = this.Scrabball || {};
         update: function() {
             if (this.paused) return;
 
+            this.board.interact();
             this.board.render();
         },
 

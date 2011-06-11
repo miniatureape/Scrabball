@@ -2,8 +2,8 @@ this.Scrabball = this.Scrabball || {};
 
 (function($, G) {
 
-    var RADIUS = 10;
-    var FRICTION = 75;
+    var RADIUS = 15;
+    var FRICTION = 50;
 
     G.Ball = new Class({
         id: null,
@@ -14,7 +14,7 @@ this.Scrabball = this.Scrabball || {};
         rad: null,
         color: null,
         mass: 1,
-        maxSpeed: 10,
+        maxSpeed: 20,
         val: '',
 
         initialize: function(loc) {
@@ -74,10 +74,10 @@ this.Scrabball = this.Scrabball || {};
 
         bounds: function(bounds) {
            var normal, c;
-           if (this.loc.x < bounds.topleft.x) normal = G.Util.RIGHT;
-           if (this.loc.y < bounds.topleft.y) normal = G.Util.DOWN;
-           if (this.loc.x > bounds.bottomright.x) normal = G.Util.LEFT;
-           if (this.loc.y > bounds.bottomright.y) normal = G.Util.UP;
+           if (this.loc.x < bounds.topleft.x + this.rad) normal = G.Util.RIGHT;
+           if (this.loc.y < bounds.topleft.y + this.rad) normal = G.Util.DOWN;
+           if (this.loc.x > bounds.bottomright.x - this.rad) normal = G.Util.LEFT;
+           if (this.loc.y > bounds.bottomright.y - this.rad) normal = G.Util.UP;
            if (normal) {
                var c = Vector2D.componentVector(this.vel, normal);
                this.vel.sub(c.mult(2));
@@ -88,7 +88,13 @@ this.Scrabball = this.Scrabball || {};
             // TODO, you might want to stop thing completely if their vel/acc is too low
             var frict = G.Vector2D.mult(vel, -1).scale(1/FRICTION);
             vel.add(frict);
-        }
+        },
+
+        over: function(pos) {
+            var diff = G.Vector2D.sub(pos, this.loc);
+            return diff.mag() <= this.rad;
+        },
+
 
     });
 
@@ -125,6 +131,18 @@ this.Scrabball = this.Scrabball || {};
             ball.bounds(this.bounds);
         }, this);
     
+    }
+
+    G.BallMgr.prototype.testClick = function(balls, pos) {
+        this.hit = null;
+
+        balls.each(function(ball) {
+            if (ball.over(pos)) {
+                this.hit = ball;
+            }
+        }, this);
+
+        return this.hit;
     }
  
  })(document.id, this.Scrabball)
