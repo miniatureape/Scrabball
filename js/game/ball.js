@@ -11,15 +11,18 @@ this.Scrabball = this.Scrabball || {};
         loc: null,
         acc: null,
         vel: null,
-        rot: null,
+        angAcc: 0,
+        angVel: 0,
+        rot: 0,
         rad: null,
         color: null,
         mass: 1,
-        maxSpeed: 50,
-        val: 'a',
+        maxSpeed: 30,
+        val: '',
 
-        initialize: function(loc) {
+        initialize: function(loc, val) {
             this.loc = loc;
+            this.val = val;
             this.acc = G.Vector2D.random(2);
             this.vel = G.Vector2D.random(2);
             this.rad = RADIUS;
@@ -38,16 +41,16 @@ this.Scrabball = this.Scrabball || {};
             this.update();
 
             ctx.save();
+            ctx.translate(this.loc.x, this.loc.y);
+            ctx.rotate(this.rot);
             ctx.beginPath();
             ctx.fillStyle = this.fill;
-            ctx.translate(this.loc.x, this.loc.y);
             ctx.arc(0, 0, RADIUS, 0, G.Util.TWO_PI);
             ctx.fill();
             ctx.fillStyle = this.fontColor;
             ctx.font = this.textStyle;
             ctx.fillText(this.val, -this.textOffset, this.textOffset);
             ctx.restore();
-
         },
 
         update: function() {
@@ -114,12 +117,12 @@ this.Scrabball = this.Scrabball || {};
         this.bounds = bounds;
     };
 
-    G.BallMgr.prototype.createAlongLine = function(vec, num, size, spacing) {
+    G.BallMgr.prototype.createAlongLine = function(vec, ballVals, size, spacing) {
         var results = [],
             stepVec = new G.Vector2D(0, size + spacing);
 
-        for (var i = 0; i < num; i++) {
-            results.push(new G.Ball(vec));
+        for (var i = 0; i < ballVals.length; i++) {
+            results.push(new G.Ball(vec, ballVals[i]));
             vec = G.Vector2D.add(vec, stepVec);
         }
 

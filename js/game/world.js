@@ -81,9 +81,10 @@ this.Scrabball = this.Scrabball || {};
             G.lastMousePos = G.mousePos.get();
             G.mousePos.setCoords(x,y);
 
-            var vel = G.mousePos.get().sub(G.lastMousePos);
-            this.ballMgr.hit.applyForce(vel.scale(.1));
-
+            if (this.ballMgr.hit) {
+                var vel = G.mousePos.get().sub(G.lastMousePos);
+                this.ballMgr.hit.applyForce(vel.scale(.1));
+            }
         },
         
         createBounds: function() {
@@ -111,17 +112,17 @@ this.Scrabball = this.Scrabball || {};
             this.pushSprite('troughs', pTwoTrough);
         },
 
-        addInitialBalls: function() {
+        addInitialBalls: function(ballVals) {
             // TODO When these are finalized, make them their own constants.
             var x = TROUGH_OFFSET_H * 2,
                 y = TROUGH_OFFSET_V;
 
             var vec = this.getOffset(G.P_ONE, x, y);
-            var balls = this.ballMgr.createAlongLine(vec, 10, 20, 20);
+            var balls = this.ballMgr.createAlongLine(vec, ballVals, 20, 20);
             this.pushSprite('balls', balls);
 
             vec = this.getOffset(G.P_TWO, x, y);
-            var balls = this.ballMgr.createAlongLine(vec, 10, 20, 20);
+            var balls = this.ballMgr.createAlongLine(vec, ballVals, 20, 20);
             this.pushSprite('balls', balls);
         },
         
@@ -143,8 +144,9 @@ this.Scrabball = this.Scrabball || {};
             }
         },
 
-        setup: function() {
-            this.addInitialBalls();
+        setup: function(data) {
+            console.log(data);
+            this.addInitialBalls(data.ballVals);
         },
 
         interact: function() {
@@ -158,13 +160,14 @@ this.Scrabball = this.Scrabball || {};
             this.background(ctx);
             this.renderCenterline(ctx);
 
+            this.ballMgr.collide(this.sprites.balls);
+
             for (set in this.sprites) {
                 this.sprites[set].each(function(sprite) {
                     sprite.render(ctx);
                 });
             }
 
-            this.ballMgr.collide(this.sprites.balls);
         },
 
         background: function(ctx) {
@@ -258,7 +261,7 @@ this.Scrabball = this.Scrabball || {};
             },
 
             ready: function(payload) {
-                this.board.setup();
+                this.board.setup(payload);
             }
         },
 
