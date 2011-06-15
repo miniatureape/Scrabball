@@ -3,7 +3,8 @@ this.Scrabball = this.Scrabball || {};
 (function($, G) {
 
     var RADIUS = 15;
-    var FRICTION = 50;
+    var FRICTION = 40;
+    var FONTSIZE = 24;
 
     G.Ball = new Class({
         id: null,
@@ -14,26 +15,37 @@ this.Scrabball = this.Scrabball || {};
         rad: null,
         color: null,
         mass: 1,
-        maxSpeed: 20,
-        val: '',
+        maxSpeed: 50,
+        val: 'a',
 
         initialize: function(loc) {
             this.loc = loc;
             this.acc = G.Vector2D.random(2);
             this.vel = G.Vector2D.random(2);
             this.rad = RADIUS;
+            this.setupStyles();
+        },
+        
+        setupStyles: function() {
+            this.textStyle = 'bold ' + FONTSIZE + 'px sans-serif';
+            this.textOffset = (FONTSIZE/4);
+            this.stroke = '#ff0000';
+            this.fill = '#aaaaaa';
+            this.fontColor = '#ffffff';
         },
 
         render: function(ctx) {
             this.update();
 
-            var stroke = '#ff0000';
             ctx.save();
-            ctx.strokeStyle = stroke;
             ctx.beginPath();
+            ctx.fillStyle = this.fill;
             ctx.translate(this.loc.x, this.loc.y);
             ctx.arc(0, 0, RADIUS, 0, G.Util.TWO_PI);
-            ctx.stroke();
+            ctx.fill();
+            ctx.fillStyle = this.fontColor;
+            ctx.font = this.textStyle;
+            ctx.fillText(this.val, -this.textOffset, this.textOffset);
             ctx.restore();
 
         },

@@ -14,8 +14,8 @@ this.Scrabball = this.Scrabball || {};
 
         sprites: {
             environ: [],
-            balls: [],
             troughs: [],
+            balls: [],
         },
 
         options: {
@@ -80,6 +80,9 @@ this.Scrabball = this.Scrabball || {};
             // Set global positions
             G.lastMousePos = G.mousePos.get();
             G.mousePos.setCoords(x,y);
+
+            var vel = G.mousePos.get().sub(G.lastMousePos);
+            this.ballMgr.hit.applyForce(vel.scale(.1));
 
         },
         

@@ -3,7 +3,7 @@ this.Scrabball = this.Scrabball || {};
 (function($, G) {
     
     var NUM_BOXES = 8;
-    var BOX_SIZE = 25; // px
+    var BOX_SIZE = 35; // px
     var BOX_SPACING = 5; //px
 
     G.Trough = new Class({
